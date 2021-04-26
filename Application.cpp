@@ -30,7 +30,7 @@ std::pair<std::vector<int>, double> mul(const std::vector<int>& m1, const std::v
     }
     
     auto end = std::chrono::system_clock::now();
-    return {r, (double)std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()};
+    return {r, (double)std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() / 1000};
 }
 
 void printMatrix(const std::vector<int>& m, int w, int h) {
@@ -115,14 +115,14 @@ void Gpu::Application::main(const std::vector<std::string>& args) {
     
     std::cout << "ElapsedTime: "
               << double(event.getProfilingInfo<CL_PROFILING_COMMAND_END>() -
-                        event.getProfilingInfo<CL_PROFILING_COMMAND_START>()) / 1000 << std::endl;
+                        event.getProfilingInfo<CL_PROFILING_COMMAND_START>()) / 1E6 << std::endl;
     
     if(check) {
         auto cpu = mul(matrix1, matrix2, m, k, n);
         std::cout << "CpuElapsedTime: " << cpu.second << std::endl;
         std::cout << (cpu.first == matrix3 ? "Equals" : "Not equals") << std::endl;
-        printMatrix(matrix3, m, n);
-        std::cout << std::endl;
-        printMatrix(cpu.first, m, n);
+//        printMatrix(matrix3, m, n);
+//        std::cout << std::endl;
+//        printMatrix(cpu.first, m, n);
     }
 }
