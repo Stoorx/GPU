@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include "Application.h"
+#include "Application2.h"
 
 int main(int argc, char** argv) {
     try {
@@ -12,7 +13,7 @@ int main(int argc, char** argv) {
         for(size_t i = 1; i < argc; i++) {
             args.emplace_back(argv[i]);
         }
-        Gpu::Application::main(args);
+        Gpu::Application2::main(args);
     }
     catch(const std::exception& e) {
         std::cerr << "Unhandled exception:\n" << e.what() << std::endl;

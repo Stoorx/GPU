@@ -4,14 +4,12 @@
 
 #include "Application.h"
 #include <iostream>
-#include <functional>
 #include <utility>
 #include <CL/cl2.hpp>
-#include <CL/opencl.hpp>
 #include <random>
 #include <fstream>
 
-std::pair<std::vector<int>, double> mul(const std::vector<int>& m1, const std::vector<
+std::pair<std::vector<int>, double> Gpu::Application::mul(const std::vector<int>& m1, const std::vector<
         int>& m2, int m, int k, int n) {
     std::vector<int> r(m * n);
     
@@ -33,10 +31,10 @@ std::pair<std::vector<int>, double> mul(const std::vector<int>& m1, const std::v
     return {r, (double)std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() / 1000};
 }
 
-void printMatrix(const std::vector<int>& m, int w, int h) {
+void Gpu::Application::printMatrix(const std::vector<int>& m, int w, int h) {
     for(int i = 0; i < h; i++) {
         for(int j = 0; j < w; j++) {
-            std::cout << m[i * w + j] << " ";
+            std::cout << m[i * w + j] << ";";
         }
         std::cout << std::endl;
     }
@@ -56,6 +54,7 @@ void Gpu::Application::main(const std::vector<std::string>& args) {
         std::cout << "Name: " << dev.getInfo<CL_DEVICE_NAME>() << std::endl;
         std::cout << "Clock: " << dev.getInfo<CL_DEVICE_MAX_CLOCK_FREQUENCY>() << std::endl;
         std::cout << "Compute units: " << dev.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>() << std::endl;
+        std::cout << "Workgroups: " << dev.getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>() << std::endl;
         std::cout << std::endl;
     }
     cl::Device currentDevice;
@@ -88,7 +87,7 @@ void Gpu::Application::main(const std::vector<std::string>& args) {
     
     cl::Buffer buffer1 = cl::Buffer(context, CL_MEM_READ_ONLY, m * k * sizeof(int));
     cl::Buffer buffer2 = cl::Buffer(context, CL_MEM_READ_ONLY, k * n * sizeof(int));
-    commandQueue.enqueueWriteBuffer(buffer1, CL_TRUE, 0, m * k * sizeof(int), matrix1.data());
+    
     commandQueue.enqueueWriteBuffer(buffer2, CL_TRUE, 0, k * n * sizeof(int), matrix2.data());
     cl::Buffer buffer3         = cl::Buffer(context, CL_MEM_WRITE_ONLY, m * n * sizeof(int));
     
