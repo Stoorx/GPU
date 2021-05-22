@@ -17,11 +17,9 @@ __kernel void transposeLocal(__global int* m1, __global int* m2, int m, int n) {
     
     __local int buffer[16][16];
     if(globalCol1 < m && globalRow1 < n) {
-        buffer[locCol * 16][locRow] = m1[globalRow1 * m + globalCol1];
-    }
-    barrier(CLK_LOCAL_MEM_FENCE);
-    if(globalCol2 < m && globalRow2 < n) {
-        m2[globalRow2 * n + globalCol2] = buffer[locRow * 16][locCol];
+        buffer[locCol][locRow] = m1[globalRow1 * m + globalCol1];
+        barrier(CLK_LOCAL_MEM_FENCE);
+        m2[globalRow2 * n + globalCol2] = buffer[locRow][locCol];
     }
 }
 
@@ -37,10 +35,8 @@ __kernel void transposeLocalBanksafe(__global int* m1, __global int* m2, int m, 
     
     __local int buffer[16][16 + 1];
     if(globalCol1 < m && globalRow1 < n) {
-        buffer[locCol * 16 + 1][locRow] = m1[globalRow1 * m + globalCol1];
-    }
-    barrier(CLK_LOCAL_MEM_FENCE);
-    if(globalCol2 < m && globalRow2 < n) {
-        m2[globalRow2 * n + globalCol2] = buffer[locRow * 16 + 1][locCol];
+        buffer[locCol][locRow] = m1[globalRow1 * m + globalCol1];
+        barrier(CLK_LOCAL_MEM_FENCE);
+        m2[globalRow2 * n + globalCol2] = buffer[locRow][locCol];
     }
 }
